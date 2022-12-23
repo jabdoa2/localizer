@@ -71,6 +71,13 @@ class Dataset:
     def _convert_from_anno(self, anno):
         dataset = []
 
+        categories = set()
+        for file in anno['files']:
+            for marker in file['markers']:
+                categories.add("{}-{}".format(marker['type'], marker['category']))
+
+        categories = list(sorted(categories))
+
         for file in anno['files']:
             data_element = {
                 'image': file['name'],
@@ -78,16 +85,15 @@ class Dataset:
             }
             dataset.append(data_element)
             for marker in file['markers']:
-                if marker['type'] == 'object':
-                    value = [float(v) for v in marker['value'].split()]
-                    data_element['objects'].append({
-                        'category': marker['category'],
-                        'origin': {
-                            'x': value[0],
-                            'y': value[1],
-                            'angle': value[2]
-                        }
-                    })
+                value = [float(v) for v in marker['value'].split()]
+                data_element['objects'].append({
+                    'category': categories.index("{}-{}".format(marker['type'], marker['category'])),
+                    'origin': {
+                        'x': value[0],
+                        'y': value[1],
+                        'angle': value[2] if len(value) == 3 else 0.0
+                    }
+                })
 
         return dataset
 
