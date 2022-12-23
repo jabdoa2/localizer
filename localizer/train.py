@@ -398,7 +398,7 @@ class Trainer:
 
         if training_fraction == int(training_fraction):
             hashes = [
-                (random.str_to_random(os.path.basename(self._dataset.data_elements[i].rel_path)), i)
+                (random.str_to_random(self._dataset.data_elements[i].rel_path), i)
                 for i in range(len(self._dataset.data_elements))
             ]
             hashes.sort(key=lambda x: x[0])
@@ -411,7 +411,7 @@ class Trainer:
             if type(training_fraction) == list:
                 accepted = data_element.rel_path in training_fraction
             else:
-                accepted = random.str_to_random(os.path.basename(data_element.rel_path)) < training_fraction
+                accepted = random.str_to_random(data_element.rel_path) < training_fraction
             if accepted:
                 self._filters['train'].data_element_indices.append(i)
             else:
@@ -514,7 +514,7 @@ class Trainer:
 
         category_models = []
 
-        for cat in range(self._category_count):
+        for _ in range(self._category_count):
             category_model = f
             conv_params['activation'] = None
             category_model = keras.layers.Conv2D(32, (1, 1), **conv_params)(category_model)
